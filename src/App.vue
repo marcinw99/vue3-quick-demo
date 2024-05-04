@@ -3,8 +3,8 @@
   <div class="container">
     <Balance :total="total" />
     <IncomeExpenses :income="total_income" :expenses="total_expenses" />
-    <TransactionList :transactions="transactions" />
-    <AddTransaction />
+    <TransactionList :transactions="transactions" @transactionDeleted="handleTransactionDeleted" />
+    <AddTransaction @transactionSubmitted="handleTransactionSubmitted" />
   </div>
 </template>
 
@@ -42,4 +42,21 @@ const total_expenses = computed(() => {
 })
 
 const total = computed(() => total_income.value - total_expenses.value)
+
+// this types should be properly pointed to a common interface
+const handleTransactionSubmitted = (data: { text: string; amount: number }) => {
+  transactions.value.push({
+    id: generateUniqueId(),
+    text: data.text,
+    amount: data.amount
+  })
+}
+
+const handleTransactionDeleted = (id: number) => {
+  transactions.value = transactions.value.filter((transaction) => transaction.id !== id)
+}
+
+const generateUniqueId = () => {
+  return Math.floor(Math.random() * 1000000)
+}
 </script>
